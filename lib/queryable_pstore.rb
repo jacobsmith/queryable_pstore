@@ -1,6 +1,5 @@
 require 'pstore'
 require 'ostruct'
-require 'pry'
 
 class QueryablePStore < PStore
   class Query
