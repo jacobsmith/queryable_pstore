@@ -2,7 +2,7 @@ require 'pstore'
 require 'ostruct'
 require 'pry'
 
-class Urology < PStore
+class LMNO < PStore
   class Query
     attr_reader :attribute, :condition, :argument
 
@@ -53,7 +53,7 @@ class Urology < PStore
     end
   end
 
-  ### Urology
+  ### LMNO
   attr_reader :store
 
   def initialize(store_name)
@@ -86,5 +86,5 @@ class Urology < PStore
   end
 end
 
-# u = Urology.new('testing.pstore')
+# u = LMNO.new('testing.pstore')
 # puts u.test_value_gt(0.0).attributes_lambda { |row| row.name == "Daniela" && row[:test_value] < 10.0 }.results
