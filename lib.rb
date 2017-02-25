@@ -1,4 +1,5 @@
 require 'pstore'
+require 'ostruct'
 require 'pry'
 
 class Urology < PStore
@@ -45,7 +46,7 @@ class Urology < PStore
       when :ilike
         thing_to_check.downcase.include? argument.downcase
       when :lambda
-        argument.call(row) # lambda takes the whole row
+        argument.call(OpenStruct.new(row)) # lambda takes the whole row
       else
         raise "Unknown Conditional: #{condition}"
       end
@@ -86,4 +87,4 @@ class Urology < PStore
 end
 
 # u = Urology.new('testing.pstore')
-# puts u.test_value_gt(0.0).attributes_lambda { |row| row[:name] == "Daniela" && row[:test_value] < 10.0 }.results
+# puts u.test_value_gt(0.0).attributes_lambda { |row| row.name == "Daniela" && row[:test_value] < 10.0 }.results
