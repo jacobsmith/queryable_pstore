@@ -8,6 +8,6 @@ Gem::Specification.new do |s|
   s.email       = 'jacob.wesley.smith@gmail.com'
   s.files       = ["lib/queryable_pstore.rb"]
   s.homepage    =
-    'http://rubygems.org/gems/hola'
+    'http://rubygems.org/gems/queryable_pstore'
   s.license       = 'MIT'
 end
