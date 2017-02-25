@@ -2,7 +2,7 @@ require 'pstore'
 require 'pry'
 
 class Urology < PStore
-  class Queryable
+  class Query
     attr_reader :attribute, :condition, :argument
 
     def initialize(attribute, condition, argument)
@@ -53,7 +53,7 @@ class Urology < PStore
 
   def initialize(store_name)
     super(store_name)
-    @queryables = []
+    @queries = []
   end
 
   def records
@@ -66,17 +66,17 @@ class Urology < PStore
     attribute = method.to_s.split("_")[0..-2].join("_").to_sym
     modifier = method.to_s.split("_")[-1].to_sym
 
-    @queryables << Queryable.new(attribute, modifier, argument)
+    @queries << Query.new(attribute, modifier, argument)
     self
   end
 
   def results
-    answer = @queryables.inject(records) { |records, queryable| queryable.filter(records) }
-    @queryables = []
+    answer = @queries.inject(records) { |records, queryable| queryable.filter(records) }
+    @queries = []
     answer
   rescue StandardError => e
-    # In the event something bad happens, get us back to a good state without any queryables hanging around
-    @queryables = []
+    # In the event something bad happens, get us back to a good state without any queries hanging around
+    @queries = []
     raise e
   end
 end
