@@ -1,11 +1,7 @@
 # QueryablePStore
-==========
-
 QueryablePStore is a quick and easy way to query a PStore file. It's syntax is inspired by ActiveRecord, but is more simplified. Of note, appending `.results` is required to actually execute the query and return the results.
 
-===
-
-Examples:
+## Examples:
 
 Assuming a `testing.pstore` file that has the following hash saved:
 
@@ -19,14 +15,14 @@ Assuming a `testing.pstore` file that has the following hash saved:
 }
 ```
 
-All users older than 30:
+- All users older than 30:
 
 ```ruby
 q = QueryablePStore.new("testing.pstore")
 q.age_gt(30).results
 ```
 
-All Users younger than 60 with a weight greater than 100:
+- All Users younger than 60 with a weight greater than 100:
 
 ```ruby
 q = QueryablePStore.new("testing.pstore")
@@ -34,7 +30,7 @@ q.age_lt(60).weight_gt(100.0).results
 ```
 
 The `attributes_lambda` function recieves the entire record wrapped in an OpenStruct, so both `[]` and dot-notation access methods are supported.
-All Users with an email ending with `example.com`:
+- All Users with an email ending with `example.com`:
 
 ```ruby
 q = QueryablePStore.new("testing.pstore")
