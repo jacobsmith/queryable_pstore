@@ -16,7 +16,7 @@ class Urology < PStore
         handle_terminating_function(results)
       else
         results.select do |result|
-          conditional(result[@attribute], @condition, @argument)
+          conditional(result, @condition, @argument)
         end
       end
     end
@@ -30,7 +30,9 @@ class Urology < PStore
       end
     end
 
-    def conditional(thing_to_check, condition, argument)
+    def conditional(row, condition, argument)
+      thing_to_check = row[@attribute] # for direct comparison methods
+
       case condition
       when :gt
         thing_to_check > argument
@@ -42,6 +44,8 @@ class Urology < PStore
         argument.include?(thing_to_check) 
       when :ilike
         thing_to_check.downcase.include? argument.downcase
+      when :lambda
+        argument.call(row) # lambda takes the whole row
       else
         raise "Unknown Conditional: #{condition}"
       end
@@ -62,11 +66,11 @@ class Urology < PStore
     end
   end
 
-  def method_missing(method, argument)
+  def method_missing(method, argument = nil, &blk)
     attribute = method.to_s.split("_")[0..-2].join("_").to_sym
     modifier = method.to_s.split("_")[-1].to_sym
 
-    @queries << Query.new(attribute, modifier, argument)
+    @queries << Query.new(attribute, modifier, argument || blk)
     self
   end
 
@@ -81,5 +85,5 @@ class Urology < PStore
   end
 end
 
-# u = Urology.new('sidekiq.pstore')
-# u.time_to_complete_gt(0.5).results
+# u = Urology.new('testing.pstore')
+# puts u.test_value_gt(0.0).attributes_lambda { |row| row[:name] == "Daniela" && row[:test_value] < 10.0 }.results
