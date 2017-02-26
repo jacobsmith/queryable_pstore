@@ -39,3 +39,21 @@ q.attributes_lambda { |row| row.email.end_with?("example.com") }.results
 q.attributes_lambda { |row| row[:email].end_with?("example.com") }.results
 ```
 
+## CSV Import
+
+The library also supports importing a CSV that is already written to disk. It will then create a PStore at the location `#{filename}.pstore` and return an instance of a QueryablePStore loaded for you to use.
+
+```ruby
+q = QueryablePStore.import_csv("test.csv")
+q.name_eq("John Doe").results
+```
+
+It will normalize all headers to lowercase symbols, but may run in to trouble with headers with odd characters in the name or spaces.
+
+Additionally, you can let QueryablePStore know how to convert integer and float fields so that `gt` and `lt` queries can use numbers rather than strings for comparisons.
+
+```ruby
+q = QueryablePStore.import_csv("test.csv", convert: [age: :integer])
+q.age_gt(20).results
+```
+
