@@ -1,14 +1,34 @@
 require 'pstore'
 require 'ostruct'
+require 'pry'
 
 class QueryablePStore < PStore
   class Query
     attr_reader :attribute, :condition, :argument
+    TERMINATING_FUNCTIONS = [:pluck]
 
     def initialize(attribute, condition, argument)
       @attribute = attribute
       @condition = condition
       @argument = argument
+    end
+
+    def valid?(records)
+      valid = attribute_present?(records) || argument_is_block? || terminating_function?
+      raise ArgumentError.new("The attribute `#{@attribute}` is not present in the PStore.") unless valid
+      valid
+    end
+
+    def attribute_present?(records)
+      records.any? { |record| record.keys.include? @attribute }
+    end
+
+    def argument_is_block?
+      @argument.respond_to?(:call)
+    end
+
+    def terminating_function?
+      TERMINATING_FUNCTIONS.include?(@condition)
     end
 
     def filter(results)
@@ -69,7 +89,8 @@ class QueryablePStore < PStore
     attribute = method.to_s.split("_")[0..-2].join("_").to_sym
     modifier = method.to_s.split("_")[-1].to_sym
 
-    @queries << Query.new(attribute, modifier, argument || blk)
+    query = Query.new(attribute, modifier, argument || blk) 
+    @queries << query if query.valid?(records)
     self
   end
 
