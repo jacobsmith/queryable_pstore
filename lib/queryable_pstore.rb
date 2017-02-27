@@ -1,6 +1,8 @@
 require 'pstore'
 require 'ostruct'
 require 'securerandom'
+require 'csv'
+
 require_relative 'query'
 require_relative 'csv_converter'
 
