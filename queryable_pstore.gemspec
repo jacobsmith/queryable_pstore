@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.description = "This provides a very simple way of querying PStores. It allows you to write queries like: `pstore.age_gt(40).height_lt(1.8).results` Additional documentation is available on the GitHub page."
   s.authors     = ["Jacob Smith"]
   s.email       = 'jacob.wesley.smith@gmail.com'
-  s.files       = ["lib/*.rb"]
+  s.files       = Dir["lib/*.rb"]
   s.homepage    =
     'https://github.com/jacobsmith/queryable_pstore'
   s.license       = 'MIT'
