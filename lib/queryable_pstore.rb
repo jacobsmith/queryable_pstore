@@ -5,23 +5,12 @@ require 'csv'
 
 require_relative 'query'
 require_relative 'csv_converter'
+require_relative 'csv_importer'
 
 class QueryablePStore < PStore
-  def self.import_csv(filename, opts = {})
-    csv_converters = opts.fetch(:convert, []).map { |conversion| CSVConverter.new(conversion) }
+  extend SingleForwardable
+  def_delegator :CSVImporter, :import_csv
 
-    csv = CSV.read(File.open(filename), headers: true, header_converters: -> (header) { header.downcase.to_sym })
-
-    store = new("#{filename}.pstore")
-    store.transaction do
-      csv.each do |row|
-        store[SecureRandom.uuid] = csv_converters.inject(row.to_h) { |hash, converter| converter.convert(hash) }
-      end
-    end
-    
-    store
-  end
-  
   def initialize(store_name)
     super(store_name)
     @queries = []
@@ -29,7 +18,7 @@ class QueryablePStore < PStore
 
   def records
     transaction do
-      roots.map { |root| fetch(root) } 
+      roots.map { |root| fetch(root) }
     end
   end
 
@@ -37,7 +26,7 @@ class QueryablePStore < PStore
     attribute = method.to_s.split("_")[0..-2].join("_").to_sym
     modifier = method.to_s.split("_")[-1].to_sym
 
-    query = Query.new(attribute, modifier, argument || blk) 
+    query = Query.new(attribute, modifier, argument || blk)
     @queries << query if query.valid?(records)
     self
   end
