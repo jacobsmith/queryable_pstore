@@ -48,7 +48,16 @@ q = QueryablePStore.import_csv("test.csv")
 q.name_eq("John Doe").results
 ```
 
-It will normalize all headers to lowercase symbols, but may run in to trouble with headers with odd characters in the name or spaces.
+It will normalize all headers by downcasing all alpha characters (`[a-zA-Z]`) and replacing any other characters with `_`.
+
+Example:
+
+```
+"Hello World" => :hello_world
+"$/yr" => :__yr
+"Test-Header" => :test_header
+```
+
 
 Additionally, you can let QueryablePStore know how to convert integer and float fields so that `gt` and `lt` queries can use numbers rather than strings for comparisons.
 
@@ -56,4 +65,3 @@ Additionally, you can let QueryablePStore know how to convert integer and float 
 q = QueryablePStore.import_csv("test.csv", convert: [age: :integer])
 q.age_gt(20).results
 ```
-
