@@ -8,8 +8,20 @@ require_relative 'csv_converter'
 require_relative 'csv_importer'
 
 class QueryablePStore < PStore
-  extend SingleForwardable
-  def_delegator :CSVImporter, :import_csv
+  class << self
+    def import_csv(filename, opts = {})
+      CSVImporter.new.import_csv(filename, opts)
+    end
+
+    def import_csv_from_string(string, opts = {})
+      CSVImporter.new.import_csv_from_string(string, opts)
+    end
+  end
+
+  extend  Forwardable
+  attr_accessor :csv_importer
+  def_delegator :@csv_importer, :original_headers
+  def_delegator :@csv_importer, :headers_and_type
 
   def initialize(store_name)
     super(store_name)

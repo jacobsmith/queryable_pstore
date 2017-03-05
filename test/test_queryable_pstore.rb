@@ -34,7 +34,7 @@ class QueryablePStoreTest < Minitest::Test
 
   def test_attribute_not_present_equals
     queryable_pstore = setup_pstore
-    
+
     error = assert_raises ArgumentError do
       queryable_pstore.foobar_eq("foobaz").results
     end
@@ -44,7 +44,7 @@ class QueryablePStoreTest < Minitest::Test
 
   def test_lambda_function_valid
     queryable_pstore = setup_pstore
-    assert_equal queryable_pstore.attributes_lambda { |record| record.name == "John Doe" }.results, [JOHN] 
+    assert_equal queryable_pstore.attributes_lambda { |record| record.name == "John Doe" }.results, [JOHN]
   end
 
   def test_pluck_method

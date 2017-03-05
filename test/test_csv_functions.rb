@@ -1,4 +1,5 @@
 require 'minitest/autorun'
+require "minitest/focus"
 require 'queryable_pstore'
 require 'csv'
 
@@ -22,7 +23,10 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
 
   def delete_test_csv
     File.delete(CSV_FILENAME)
-    File.delete(CSV_FILENAME + ".pstore") # delete the auto-created store as well
+
+    Dir.glob(["*.pstore"]).each do |pstore|
+      File.delete(pstore) # delete the auto-created store as well
+    end
   end
 
   def test_import_csv_as_file_location_does_not_blow_up
@@ -55,6 +59,14 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
     delete_test_csv
   end
 
+  def test_import_csv_return_headers
+    write_test_csv
+    store = QueryablePStore.import_csv(CSV_FILENAME, convert: [age: :float])
+    assert_equal store.original_headers, ["Name", "Email", "Age"]
+    assert_equal store.headers_and_type, {"Name" => String, "Email" => String, "Age" => Float}
+    delete_test_csv
+  end
+
   def test_import_csv_with_special_characters_in_headers
     foobar = ["foobar", "300", "Smith"]
     foobaz = ["foobaz", "400", "Jones"]
@@ -78,5 +90,14 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
 
     assert_equal store.first_last_eq("Johnson").results.size, 1
     assert_equal store.first_last_eq("Johnson").results.first.values, bazquik
+  end
+
+  def test_import_csv_as_string
+    write_test_csv
+    csv_string = File.read(CSV_FILENAME)
+
+    store = QueryablePStore.import_csv_from_string(csv_string)
+    assert_equal store.name_eq("John").results, [{name: "John", email: "john@example.com", age: "23"}]
+    delete_test_csv
   end
 end
