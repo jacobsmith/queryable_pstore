@@ -92,6 +92,12 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
     assert_equal store.first_last_eq("Johnson").results.first.values, bazquik
   end
 
+  def test_queryable_headers_conversion_method
+    assert_equal QueryablePStore.queryable_header("hello"), :hello
+    assert_equal QueryablePStore.queryable_header("hello-there"), :hello_there
+    assert_equal QueryablePStore.queryable_header("Name"), :name
+  end
+
   def test_import_csv_as_string
     write_test_csv
     csv_string = File.read(CSV_FILENAME)

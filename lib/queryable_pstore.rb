@@ -16,6 +16,10 @@ class QueryablePStore < PStore
     def import_csv_from_string(string, opts = {})
       CSVImporter.new.import_csv_from_string(string, opts)
     end
+
+    def queryable_header(header)
+      CSVImporter.new.convert_header_to_methodable_name(header)
+    end
   end
 
   extend  Forwardable
@@ -52,4 +56,5 @@ class QueryablePStore < PStore
     @queries = []
     raise e
   end
+
 end
