@@ -2,6 +2,7 @@ require 'pstore'
 require 'ostruct'
 require 'securerandom'
 require 'csv'
+require 'fileutils'
 
 require_relative 'query'
 require_relative 'csv_converter'
@@ -28,6 +29,7 @@ class QueryablePStore < PStore
   def_delegator :@csv_importer, :headers_and_type
 
   def initialize(store_name)
+    FileUtils.mkdir_p(File.dirname(store_name)) # create the directory if it doesn't exist where we are saving the file
     super(store_name)
     @queries = []
   end

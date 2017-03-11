@@ -19,7 +19,7 @@ class QueryablePStoreTest < Minitest::Test
   end
 
   Minitest.after_run do
-    File.delete(TEST_FILENAME)
+    File.delete(TEST_FILENAME) if File.exist?(TEST_FILENAME)
   end
 
   def test_load_pstore

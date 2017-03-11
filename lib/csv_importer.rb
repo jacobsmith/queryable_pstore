@@ -1,5 +1,6 @@
-require 'pry'
 class CSVImporter
+  CURRENT_DIRECTORY = "./".freeze
+
   attr_reader :original_headers, :headers_and_type
 
   def import_csv(filename, opts = {})
@@ -22,8 +23,9 @@ class CSVImporter
 
   def create_pstore(csv, opts = {}, filename = SecureRandom.uuid)
     csv_converters = opts.fetch(:convert, []).map { |conversion| CSVConverter.new(conversion) }
+    file_save_location = opts[:save_to_location] || CURRENT_DIRECTORY
 
-    store = QueryablePStore.new("#{filename}.pstore")
+    store = QueryablePStore.new("#{file_save_location}#{filename}.pstore")
     store.transaction do
       csv.each do |row|
         store[SecureRandom.uuid] = csv_converters.inject(row.to_h) { |hash, converter| converter.convert(hash) }

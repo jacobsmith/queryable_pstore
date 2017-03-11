@@ -29,6 +29,16 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
     end
   end
 
+  def test_import_csv_with_save_to_location
+    write_test_csv
+    store = QueryablePStore.import_csv(CSV_FILENAME, save_to_location: "tmp/")
+    assert_equal Dir.glob("tmp/*.pstore").length, 1
+
+    delete_test_csv
+    File.delete("tmp/#{CSV_FILENAME}.pstore")
+    FileUtils.rmdir("tmp/")
+  end
+
   def test_import_csv_as_file_location_does_not_blow_up
     write_test_csv
     store = QueryablePStore.import_csv(CSV_FILENAME)
