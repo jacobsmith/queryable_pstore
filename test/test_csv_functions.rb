@@ -48,14 +48,14 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
 
   def test_import_csv_can_convert_integers
     write_test_csv
-    store = QueryablePStore.import_csv(CSV_FILENAME, convert: [age: :integer])
+    store = QueryablePStore.import_csv(CSV_FILENAME, convert: {age: :integer})
     assert_equal store.name_eq("John").results, [{name: "John", email: "john@example.com", age: 23}]
     delete_test_csv
   end
 
   def test_import_csv_can_convert_floats
     write_test_csv
-    store = QueryablePStore.import_csv(CSV_FILENAME, convert: [age: :float])
+    store = QueryablePStore.import_csv(CSV_FILENAME, convert: {age: :float})
     assert_equal store.name_eq("John").results, [{name: "John", email: "john@example.com", age: 23.0}]
     delete_test_csv
   end
@@ -63,7 +63,7 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
   def test_import_csv_raise_error_on_unknown_conversion
     write_test_csv
     error = assert_raises ArgumentError do
-      QueryablePStore.import_csv(CSV_FILENAME, convert: [age: :foobar])
+      QueryablePStore.import_csv(CSV_FILENAME, convert: {age: :foobar})
     end
     assert_equal error.message, "Unknown converter: `foobar`"
     delete_test_csv
@@ -71,9 +71,17 @@ class QueryablePStoreCSVFunctionsTest < Minitest::Test
 
   def test_import_csv_return_headers
     write_test_csv
-    store = QueryablePStore.import_csv(CSV_FILENAME, convert: [age: :float])
+    store = QueryablePStore.import_csv(CSV_FILENAME, convert: {age: :float})
     assert_equal store.original_headers, ["Name", "Email", "Age"]
     assert_equal store.headers_and_type, {"Name" => String, "Email" => String, "Age" => Float}
+    delete_test_csv
+  end
+
+  def test_import_csv_guess_header_type
+    write_test_csv
+    store = QueryablePStore.import_csv(CSV_FILENAME, convert: :best_guess)
+    assert_equal store.original_headers, ["Name", "Email", "Age"]
+    assert_equal store.headers_and_type, {"Name" => String, "Email" => String, "Age" => Integer}
     delete_test_csv
   end
 
